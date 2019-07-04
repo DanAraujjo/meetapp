@@ -20,7 +20,6 @@ class OrganizingController {
       include: [
         {
           model: File,
-          as: 'file',
           attributes: ['id', 'path', 'url'],
         },
       ],
