@@ -70,10 +70,6 @@ class MeetupController {
   }
 
   async update(req, res) {
-    if (!req.params.id) {
-      return res.status(400).json({ error: 'Id de evento inválido!' });
-    }
-
     // validar os dados informados na requisição
     const schema = Yup.object().shape({
       title: Yup.string().required(),
@@ -101,7 +97,7 @@ class MeetupController {
     });
 
     if (!meetup) {
-      return res.status(401).json({ message: 'Evento não localizado!' });
+      return res.status(404).json({ message: 'Evento não localizado!' });
     }
 
     // verifica se ja passou a data e se é possivel alteração do evento
@@ -119,6 +115,33 @@ class MeetupController {
     }
 
     await meetup.update(req.body);
+
+    return res.json(meetup);
+  }
+
+  async delete(req, res) {
+    const meetup = await Meetup.findOne({
+      where: {
+        id: req.params.id,
+        user_id: req.userId,
+        canceled_at: null,
+      },
+    });
+
+    if (!meetup) {
+      return res.status(404).json({ message: 'Evento não localizado!' });
+    }
+
+    // verifica se ja passou a data e se é possivel exclusão do evento
+    if (isBefore(meetup.date, new Date())) {
+      return res.status(400).json({
+        error: 'Ops! Esse evento já ocorreu, não é permitido exclusão.',
+      });
+    }
+
+    meetup.canceled_at = new Date();
+
+    await meetup.save();
 
     return res.json(meetup);
   }
