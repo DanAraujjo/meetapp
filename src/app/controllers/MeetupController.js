@@ -16,7 +16,7 @@ class MeetupController {
       description: Yup.string().required(),
       location: Yup.string().required(),
       date: Yup.date().required(),
-      banner_id: Yup.number().required(),
+      file_id: Yup.number().required(),
     });
 
     // verificar se o corpo da requisição é valida
