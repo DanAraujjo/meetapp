@@ -15,7 +15,7 @@ class UserController {
 
     // verificar se o corpo da requisição é valida
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ message: 'erro' });
+      return res.status(400).json({ message: 'Validação falhou!' });
     }
 
     // verificar se ja existe algum usuario cadastrado com o email informado.
