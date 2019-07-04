@@ -2,34 +2,11 @@ import * as Yup from 'yup';
 import { parseISO, isBefore } from 'date-fns';
 // import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
-import File from '../models/File';
+// import File from '../models/File';
 
 class MeetupController {
   async index(req, res) {
-    const { page = 1 } = req.query;
-
-    const meetup = await Meetup.findAll({
-      where: {
-        user_id: req.userId,
-        canceled_at: null,
-        /* date: {
-          [Op.gte]: new Date(),
-        }, */
-      },
-      order: ['date'],
-      attributes: ['id', 'title', 'description', 'date'],
-      limit: 20,
-      offset: (page - 1) * 20,
-      include: [
-        {
-          model: File,
-          as: 'file',
-          attributes: ['id', 'path', 'url'],
-        },
-      ],
-    });
-
-    return res.json(meetup);
+    return res.json();
   }
 
   async store(req, res) {
@@ -44,7 +21,7 @@ class MeetupController {
 
     // verificar se o corpo da requisição é valida
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ message: 'Validação falhou!' });
+      return res.status(400).json({ error: 'Validação falhou!' });
     }
 
     // verificar se a data ja passou
@@ -54,16 +31,9 @@ class MeetupController {
       });
     }
 
-    // cria o meetup
-    const { title, description, location, date, banner_id } = req.body;
-
     const meetup = await Meetup.create({
+      ...req.body,
       user_id: req.userId,
-      title,
-      description,
-      location,
-      date,
-      banner_id,
     });
 
     return res.status(201).json(meetup);
@@ -72,16 +42,23 @@ class MeetupController {
   async update(req, res) {
     // validar os dados informados na requisição
     const schema = Yup.object().shape({
-      title: Yup.string().required(),
-      description: Yup.string().required(),
-      location: Yup.string().required(),
-      date: Yup.date().required(),
-      banner_id: Yup.number().required(),
+      title: Yup.string(),
+      description: Yup.string(),
+      location: Yup.string(),
+      date: Yup.date(),
+      file_id: Yup.number(),
     });
 
     // verificar se o corpo da requisição é valida
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ message: 'Validação falhou!' });
+      return res.status(400).json({ error: 'Validação falhou!' });
+    }
+
+    // verificar se a nova data ja passou
+    if (isBefore(parseISO(req.body.date), new Date())) {
+      return res.status(400).json({
+        error: 'Não é permitido agendamento para data/hora passada.',
+      });
     }
 
     // localizar evento
@@ -97,20 +74,13 @@ class MeetupController {
     });
 
     if (!meetup) {
-      return res.status(404).json({ message: 'Evento não localizado!' });
+      return res.status(404).json({ error: 'Evento não localizado!' });
     }
 
     // verifica se ja passou a data e se é possivel alteração do evento
-    if (isBefore(meetup.date, new Date())) {
+    if (meetup.past) {
       return res.status(400).json({
         error: 'Ops! Esse evento já ocorreu, não é permitido alteração.',
-      });
-    }
-
-    // verificar se a nova data ja passou
-    if (isBefore(parseISO(req.body.date), new Date())) {
-      return res.status(400).json({
-        error: 'Não é permitido agendamento para data/hora passada.',
       });
     }
 
@@ -133,7 +103,7 @@ class MeetupController {
     }
 
     // verifica se ja passou a data e se é possivel exclusão do evento
-    if (isBefore(meetup.date, new Date())) {
+    if (meetup.past) {
       return res.status(400).json({
         error: 'Ops! Esse evento já ocorreu, não é permitido exclusão.',
       });
@@ -143,7 +113,7 @@ class MeetupController {
 
     await meetup.save();
 
-    return res.json(meetup);
+    return res.send();
   }
 }
 

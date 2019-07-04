@@ -15,7 +15,7 @@ class UserController {
 
     // verificar se o corpo da requisição é valida
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ message: 'Validação falhou!' });
+      return res.status(400).json({ error: 'Validação falhou!' });
     }
 
     // verificar se ja existe algum usuario cadastrado com o email informado.
@@ -25,7 +25,7 @@ class UserController {
 
     if (emailExists) {
       return res.status(400).json({
-        message: 'Já existe um usuário cadastrado com esse e-email.',
+        error: 'Já existe um usuário cadastrado com esse e-email.',
       });
     }
 
@@ -54,7 +54,7 @@ class UserController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ message: 'Validação falou!' });
+      return res.status(400).json({ error: 'Validação falou!' });
     }
 
     const { email, oldPassword } = req.body;
@@ -68,7 +68,7 @@ class UserController {
 
       if (emailExists) {
         return res.status(400).json({
-          message: 'Já existe um usuário cadastrado com esse e-email.',
+          error: 'Já existe um usuário cadastrado com esse e-email.',
         });
       }
     }
@@ -79,7 +79,7 @@ class UserController {
 
     await user.update(req.body);
 
-    return res.json({ message: 'Usuário atualizado!' });
+    return res.json({ error: 'Usuário atualizado!' });
   }
 }
 
