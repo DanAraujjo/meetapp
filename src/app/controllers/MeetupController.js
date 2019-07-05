@@ -1,12 +1,44 @@
 import * as Yup from 'yup';
-import { parseISO, isBefore } from 'date-fns';
-// import { Op } from 'sequelize';
+import { parseISO, isBefore, startOfDay, endOfDay } from 'date-fns';
+import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
-// import File from '../models/File';
+import File from '../models/File';
+import User from '../models/User';
 
 class MeetupController {
   async index(req, res) {
-    return res.json();
+    const { page = 1 } = req.query;
+
+    const where = {};
+    where.canceled_at = null;
+
+    if (req.query.date) {
+      const searchDate = parseISO(req.query.date);
+
+      where.date = {
+        [Op.between]: [startOfDay(searchDate), endOfDay(searchDate)],
+      };
+    }
+
+    const meetups = await Meetup.findAll({
+      where,
+      order: ['date'],
+      attributes: ['id', 'title', 'description', 'date'],
+      limit: 10,
+      offset: (page - 1) * 10,
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name', 'email'],
+        },
+        {
+          model: File,
+          attributes: ['id', 'path', 'url'],
+        },
+      ],
+    });
+
+    return res.json(meetups);
   }
 
   async store(req, res) {
