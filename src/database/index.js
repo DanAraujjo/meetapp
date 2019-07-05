@@ -14,16 +14,22 @@ const models = [User, File, Meetup, Subscription];
 
 class Database {
   constructor() {
-    this.init();
-  }
-
-  init() {
     // conexão com o banco de dados
     this.connection = new Sequelize(databaseConfig);
 
-    models
-      .map(model => model.init(this.connection))
-      .map(model => model.associate && model.associate(this.connection.models));
+    this.init();
+
+    this.associate();
+  }
+
+  init() {
+    models.forEach(model => model.init(this.connection));
+  }
+
+  associate() {
+    models.forEach(
+      model => model.associate && model.associate(this.connection.models)
+    );
   }
 }
 
