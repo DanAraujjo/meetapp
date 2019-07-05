@@ -1,7 +1,9 @@
-import * as Yup from 'yup';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 import Subscription from '../models/Subscription';
+
+import Queue from '../../lib/Queue';
+import SubscriptionMail from '../jobs/SubscriptionMail';
 
 class SubscriptionController {
   async index(req, res) {
@@ -9,12 +11,24 @@ class SubscriptionController {
   }
 
   async store(req, res) {
+    // busca o usuario atual
+    const user = await User.findByPk(req.userId, {
+      attributes: ['id', 'name', 'email'],
+    });
+
     // busca o evento
     const meetup = await Meetup.findOne({
+      attributes: ['id', 'title', 'location', 'date', 'user_id'],
       where: {
         id: req.params.meetupId,
         canceled_at: null,
       },
+      include: [
+        {
+          model: User,
+          attributes: ['name', 'email'],
+        },
+      ],
     });
 
     if (!meetup) {
@@ -22,7 +36,7 @@ class SubscriptionController {
     }
 
     // verificar se usuario atual é o organizador
-    if (meetup.user_id === req.userId) {
+    if (meetup.user_id === user.id) {
       return res
         .status(400)
         .json({ error: 'Você não pode ser inscrever no seu próprio evento!' });
@@ -37,7 +51,7 @@ class SubscriptionController {
 
     const checkDate = await Subscription.findOne({
       where: {
-        user_id: req.userId,
+        user_id: user.id,
       },
       include: [
         {
@@ -60,6 +74,9 @@ class SubscriptionController {
       user_id: req.userId,
       meetup_id: meetup.id,
     });
+
+    // envio de email
+    await Queue.add(SubscriptionMail.key, { meetup, user });
 
     return res.json(subscription);
   }
