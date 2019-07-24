@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import Bee from 'bee-queue';
 import * as Sentry from '@sentry/node';
 import sentryConfig from '../config/sentry';
