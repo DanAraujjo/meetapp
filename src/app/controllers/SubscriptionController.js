@@ -27,6 +27,7 @@ class SubscriptionController {
           include: [
             {
               model: File,
+              as: 'banner',
               attributes: ['id', 'path', 'url'],
             },
           ],
@@ -54,6 +55,7 @@ class SubscriptionController {
       include: [
         {
           model: User,
+          as: 'user',
           attributes: ['name', 'email'],
         },
       ],
