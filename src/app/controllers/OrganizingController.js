@@ -14,7 +14,7 @@ class OrganizingController {
         }, */
       },
       order: ['date'],
-      attributes: ['id', 'title', 'description', 'date'],
+      attributes: ['id', 'title', 'description', 'location', 'date'],
       limit: 20,
       offset: (page - 1) * 20,
       include: [
