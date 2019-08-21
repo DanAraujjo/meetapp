@@ -44,3 +44,17 @@ plugins: [
   }
 }
 ```
+
+yarn add react-native-linear-gradient
+
+react-native link react-native-linear-gradient
+
+**somente no mac**
+
+```
+cd ios
+pod install
+..
+```
+
+yarn add styled-components
