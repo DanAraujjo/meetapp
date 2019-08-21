@@ -47,8 +47,6 @@ plugins: [
 
 yarn add react-native-linear-gradient
 
-react-native link react-native-linear-gradient
-
 **somente no mac**
 
 ```
@@ -58,3 +56,7 @@ pod install
 ```
 
 yarn add styled-components
+
+yarn add prop-types
+
+yarn add react-native-vector-icons
