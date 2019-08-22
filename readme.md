@@ -10,8 +10,6 @@ yarn
 
 yarn add prettier eslint-config-prettier eslint-plugin-prettier babel-eslint -D
 
-yarn add reactotron-react-native
-
 yarn add react-navigation react-native-gesture-handler
 
 yarn add babel-plugin-root-import eslint-import-resolver-babel-plugin-root-import -D
@@ -60,3 +58,11 @@ yarn add styled-components
 yarn add prop-types
 
 yarn add react-native-vector-icons
+
+yarn add reactotron-react-native reactotron-redux reactotron-redux-saga
+
+yarn add redux redux-saga react-redux
+
+yarn add redux-persist immer
+
+yarn add axios
