@@ -1,5 +1,4 @@
 import { Op } from 'sequelize';
-import { parseISO, isBefore } from 'date-fns';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 import File from '../models/File';
@@ -18,7 +17,7 @@ class SubscriptionController {
       include: [
         {
           model: Meetup,
-          attributes: ['id', 'title', 'date'],
+          attributes: ['id', 'title', 'description', 'location', 'date'],
           where: {
             date: {
               [Op.gte]: new Date(),
@@ -26,6 +25,11 @@ class SubscriptionController {
           },
           required: true,
           include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'name', 'email'],
+            },
             {
               model: File,
               as: 'banner',
@@ -83,6 +87,7 @@ class SubscriptionController {
     const checkDate = await Subscription.findOne({
       where: {
         user_id: user.id,
+        canceled_at: null,
       },
       include: [
         {
