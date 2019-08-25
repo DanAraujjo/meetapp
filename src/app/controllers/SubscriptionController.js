@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { parseISO, isBefore } from 'date-fns';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 import File from '../models/File';
@@ -109,6 +110,43 @@ class SubscriptionController {
     await Queue.add(SubscriptionMail.key, { meetup, user });
 
     return res.json(subscription);
+  }
+
+  async delete(req, res) {
+    const meetup = await Meetup.findOne({
+      where: {
+        id: req.params.meetupId,
+        canceled_at: null,
+      },
+    });
+
+    if (!meetup) {
+      return res.status(404).json({ message: 'Evento não localizado!' });
+    }
+
+    if (meetup.past) {
+      return res.status(400).json({
+        error: 'Ops! Esse evento já ocorreu, não é permitido exclusão.',
+      });
+    }
+
+    const subscriptions = await Subscription.findOne({
+      where: {
+        user_id: req.userId,
+        meetup_id: req.params.meetupId,
+        canceled_at: null,
+      },
+    });
+
+    if (!subscriptions) {
+      return res.status(404).json({ error: 'Inscrição não localizada!' });
+    }
+
+    subscriptions.canceled_at = new Date();
+
+    await subscriptions.save();
+
+    return res.send();
   }
 }
 

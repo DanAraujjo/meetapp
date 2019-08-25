@@ -24,8 +24,8 @@ class MeetupController {
       where,
       order: ['date'],
       attributes: ['id', 'title', 'description', 'location', 'date'],
-      limit: 10,
-      offset: (page - 1) * 10,
+      limit: 3,
+      offset: (page - 1) * 3,
       include: [
         {
           model: User,
