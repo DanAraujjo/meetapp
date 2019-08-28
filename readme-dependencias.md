@@ -66,3 +66,11 @@ yarn add redux redux-saga react-redux
 yarn add redux-persist immer
 
 yarn add axios
+
+yarn add date-fns@next
+
+yarn add date-fns-tz
+
+yarn add yup
+
+yarn add formik@2.0

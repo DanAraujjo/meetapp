@@ -36,3 +36,9 @@ export const SignLinkText = styled.Text`
   font-weight: bold;
   font-size: 16px;
 `;
+
+export const Error = styled.Text`
+  color: #ffff00;
+  font-weight: 500;
+  margin: 5px 0;
+`;

@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import logo from '~/assets/logo.png';
 
-import Background from '~/components/Background';
-
 import { signInRequest } from '~/store/modules/auth/actions';
 
 import {
@@ -31,7 +29,7 @@ export default function SignIn({ navigation }) {
   }
 
   return (
-    <Background>
+    <>
       <Container>
         <Image source={logo} />
         <Form>
@@ -67,6 +65,6 @@ export default function SignIn({ navigation }) {
           <SignLinkText>Criar conta gratuita</SignLinkText>
         </SignLink>
       </Container>
-    </Background>
+    </>
   );
 }
