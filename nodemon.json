@@ -2,5 +2,5 @@
   "execMap": {
     "js": "sucrase-node"
   },
-  "igonore": ["__tests__"]
+  "ignore": ["__tests__"]
 }
