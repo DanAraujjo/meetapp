@@ -1,6 +1,7 @@
-import * as Yup from 'yup';
 import User from '../models/User';
 import File from '../models/File';
+
+const Yup = require('yup');
 
 class UserController {
   async store(req, res) {
