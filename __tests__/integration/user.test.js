@@ -23,63 +23,56 @@ describe('User', () => {
   });
 
   it('Não pode se registar sem informar o nome.', async () => {
-    const user = await factory.attrs('User', {
-      name: null,
-    });
+    const user = await factory.attrs('User');
 
     const response = await request(app)
       .post('/users')
-      .send(user);
+      .send({ ...user, name: null });
 
     expect(response.status).toBe(400);
   });
 
   it('Não pode se registar sem informar o email.', async () => {
-    const user = await factory.attrs('User', {
-      email: null,
-    });
+    const user = await factory.attrs('User');
 
     const response = await request(app)
       .post('/users')
-      .send(user);
+      .send({ ...user, email: null });
 
     expect(response.status).toBe(400);
   });
 
   it('Não pode se registar com um e-mail já utilizado (duplicado).', async () => {
-    const user = await factory.attrs('User');
+    const user1 = await factory.attrs('User');
 
     await request(app)
       .post('/users')
-      .send(user);
+      .send(user1);
 
+    const user2 = await factory.attrs('User');
     const response = await request(app)
       .post('/users')
-      .send(user);
+      .send({ ...user2, email: user1.email });
 
     expect(response.status).toBe(400);
   });
 
   it('Não pode se registar sem informar a senha.', async () => {
-    const user = await factory.attrs('User', {
-      password: null,
-    });
+    const user = await factory.attrs('User');
 
     const response = await request(app)
       .post('/users')
-      .send(user);
+      .send({ ...user, password: null });
 
     expect(response.status).toBe(400);
   });
 
   it('A senha não pode ter menos de 6 digitos.', async () => {
-    const user = await factory.attrs('User', {
-      password: '12345',
-    });
+    const user = await factory.attrs('User');
 
     const response = await request(app)
       .post('/users')
-      .send(user);
+      .send({ ...user, password: '12345' });
 
     expect(response.status).toBe(400);
   });
@@ -113,10 +106,7 @@ describe('User', () => {
     const response = await request(app)
       .put('/users')
       .set('Authorization', `bearer ${session.body.token}`)
-      .send({
-        name: 'Novo nome',
-        email: null,
-      });
+      .send({ ...user, email: null });
 
     expect(response.status).toBe(400);
   });
@@ -138,18 +128,17 @@ describe('User', () => {
       .put('/users')
       .set('Authorization', `bearer ${session.body.token}`)
       .send({
-        name: 'Novo nome',
-        email: 'novoemail@test.com',
-        oldPassword: '123458',
-        password: '654321',
-        confirmPassword: '654321',
+        ...user,
+        oldPassword: 'senha-diferente',
+        password: '123456',
+        confirmPassword: '123456',
       });
 
     expect(response.status).toBe(401);
   });
 
   it('Não pode atualizar a senha sem informa a senha atual.', async () => {
-    const user = await factory.attrs('User', { password: '123456' });
+    const user = await factory.attrs('User');
 
     // cria o usuario
     await request(app)
@@ -165,18 +154,17 @@ describe('User', () => {
       .put('/users')
       .set('Authorization', `bearer ${session.body.token}`)
       .send({
-        name: 'Novo nome',
-        email: 'novoemail@test.com',
+        ...user,
         oldPassword: null,
-        password: '654321',
-        confirmPassword: '654321',
+        password: '123456',
+        confirmPassword: '123456',
       });
 
     expect(response.status).toBe(400);
   });
 
   it('Não pode atualizar a senha sem informa confirmacão de nova senha.', async () => {
-    const user = await factory.attrs('User', { password: '123456' });
+    const user = await factory.attrs('User');
 
     // cria o usuario
     await request(app)
@@ -192,10 +180,9 @@ describe('User', () => {
       .put('/users')
       .set('Authorization', `bearer ${session.body.token}`)
       .send({
-        name: 'Novo nome',
-        email: 'novoemail@test.com',
-        oldPassword: '123456',
-        password: '654321',
+        ...user,
+        oldPassword: user.password,
+        password: '123456',
         confirmPassword: null,
       });
 
@@ -219,11 +206,10 @@ describe('User', () => {
       .put('/users')
       .set('Authorization', `bearer ${session.body.token}`)
       .send({
-        name: 'Novo nome',
-        email: 'novoemail@test.com',
-        oldPassword: '123456',
-        password: '54321',
-        confirmPassword: '54321',
+        ...user,
+        oldPassword: user.password,
+        password: '123',
+        confirmPassword: '123',
       });
 
     expect(response.status).toBe(400);
@@ -231,30 +217,27 @@ describe('User', () => {
 
   it('Não pode atualizar com um e-mail já utilizado (duplicado).', async () => {
     // cria o 1 º usuario
-    const user1 = await factory.attrs('User', { email: 'user1@test.com' });
+    const user = await factory.attrs('User');
 
     await request(app)
       .post('/users')
-      .send(user1);
+      .send({ ...user, password: '123456' });
 
     // cria o 2º usuário
-    const user2 = await factory.attrs('User');
-
     await request(app)
       .post('/users')
-      .send(user2);
+      .send({ ...user, email: 'dan.araujjo@gmail.com' });
 
-    // faz o login do 2º usuario
+    // faz o login do 1º usuario
     const session = await request(app)
       .post('/sessions')
-      .send(user2);
+      .send({ ...user, password: '123456' });
 
     const response = await request(app)
       .put('/users')
       .set('Authorization', `bearer ${session.body.token}`)
       .send({
-        name: 'Novo nome',
-        email: `${user1.email}`,
+        email: 'dan.araujjo@gmail.com',
       });
 
     expect(response.status).toBe(400);

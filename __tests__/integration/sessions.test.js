@@ -18,7 +18,7 @@ describe('Sessions', () => {
   });
 
   it('Não pode se autenticar com um e-mail inválido', async () => {
-    const user = await factory.attrs('User', { password: '123456' });
+    const user = await factory.attrs('User');
 
     // cria o usuario
     await request(app)
@@ -29,15 +29,15 @@ describe('Sessions', () => {
     const response = await request(app)
       .post('/sessions')
       .send({
+        ...user,
         email: 'invalido@test.com',
-        password: `${user.password}`,
       });
 
     expect(response.status).toBe(401);
   });
 
   it('Não pode se autenticar com senha errada', async () => {
-    const user = await factory.attrs('User', { password: '123456' });
+    const user = await factory.attrs('User');
 
     // cria o usuario
     await request(app)
@@ -48,7 +48,7 @@ describe('Sessions', () => {
     const response = await request(app)
       .post('/sessions')
       .send({
-        email: `${user.email}`,
+        ...user,
         password: 'senha-invalida',
       });
 
@@ -56,7 +56,7 @@ describe('Sessions', () => {
   });
 
   it('Deve poder se autenticar', async () => {
-    const user = await factory.attrs('User', { password: '123456' });
+    const user = await factory.attrs('User');
 
     // cria o usuario
     await request(app)
