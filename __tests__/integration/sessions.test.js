@@ -10,9 +10,16 @@ describe('Sessions', () => {
   });
 
   it('Não pode se autenticar com dados inválidos', async () => {
+    const user = await factory.attrs('User');
+
+    // cria o usuario
+    await request(app)
+      .post('/users')
+      .send(user);
+
     const response = await request(app)
       .post('/sessions')
-      .send({});
+      .send({ ...user, password: null });
 
     expect(response.status).toBe(400);
   });

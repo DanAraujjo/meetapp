@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "queue": "nodemon src/queue.js",
-    "pretest": "NODE_ENV=test sequelize db:migrate",
-    "test": "NODE_ENV=test jest",
-    "posttest": "NODE_ENV=test sequelize db:migrate:undo:all"
+    "pretest": "NODE_ENV=test && sequelize db:migrate",
+    "test": "NODE_ENV=test jest --runInBand",
+    "posttest": "NODE_ENV=test && sequelize db:migrate:undo:all"
   },
   "dependencies": {
     "@sentry/node": "5.4.3",
@@ -32,8 +32,11 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "@sucrase/jest-plugin": "^2.0.0",
     "@types/jest": "^24.0.18",
+    "babel-jest": "^24.9.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^6.0.0",

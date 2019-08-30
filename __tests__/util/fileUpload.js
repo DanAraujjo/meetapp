@@ -8,5 +8,5 @@ export default async function uploadFile(token) {
     .attach('file', resolve(__dirname, 'gostack.jpg'))
     .set('Authorization', `bearer ${token}`);
 
-  return response;
+  return response.body;
 }

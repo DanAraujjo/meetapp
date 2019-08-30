@@ -1,9 +1,10 @@
-import * as Yup from 'yup';
 import { parseISO, isBefore, startOfDay, endOfDay } from 'date-fns';
 import { Op } from 'sequelize';
 import Meetup from '../models/Meetup';
 import File from '../models/File';
 import User from '../models/User';
+
+const Yup = require('yup');
 
 class MeetupController {
   async index(req, res) {

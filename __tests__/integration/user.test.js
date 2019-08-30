@@ -216,19 +216,16 @@ describe('User', () => {
   });
 
   it('Não pode atualizar com um e-mail já utilizado (duplicado).', async () => {
-    // cria o 1 º usuario
     const user = await factory.attrs('User');
 
     await request(app)
       .post('/users')
       .send({ ...user, password: '123456' });
 
-    // cria o 2º usuário
     await request(app)
       .post('/users')
-      .send({ ...user, email: 'dan.araujjo@gmail.com' });
+      .send({ ...user, email: 'test@test.com' });
 
-    // faz o login do 1º usuario
     const session = await request(app)
       .post('/sessions')
       .send({ ...user, password: '123456' });
@@ -236,9 +233,7 @@ describe('User', () => {
     const response = await request(app)
       .put('/users')
       .set('Authorization', `bearer ${session.body.token}`)
-      .send({
-        email: 'dan.araujjo@gmail.com',
-      });
+      .send({ email: 'test@test.com' });
 
     expect(response.status).toBe(400);
   });

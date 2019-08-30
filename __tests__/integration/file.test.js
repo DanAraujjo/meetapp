@@ -11,9 +11,8 @@ describe('File', () => {
   it('Deve poder fazer upload de arquivo', async () => {
     const token = await fetchUserAuthorization();
 
-    console.log(token);
-    const reponse = await fileUpload(token);
+    const file = await fileUpload(token);
 
-    expect(reponse.body).toHaveProperty('url');
+    expect(file).toHaveProperty('url');
   });
 });

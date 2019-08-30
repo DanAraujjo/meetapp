@@ -1,6 +1,7 @@
-import faker from 'faker/locale/pt_BR';
+import faker from 'faker';
 import { factory } from 'factory-girl';
 
+import { addDays } from 'date-fns';
 import User from '../src/app/models/User';
 import Meetup from '../src/app/models/Meetup';
 
@@ -14,7 +15,7 @@ factory.define('Meetup', Meetup, {
   title: faker.name.title(),
   description: faker.lorem.paragraph(),
   location: faker.address.streetAddress(true),
-  date: faker.date.recent(5),
+  date: addDays(new Date(), 1),
 });
 
 export default factory;
