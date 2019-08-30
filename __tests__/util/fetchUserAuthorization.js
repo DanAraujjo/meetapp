@@ -9,9 +9,9 @@ export default async function fetchUserAuthorization() {
     .post('/users')
     .send(user);
 
-  const response = await request(app)
+  const session = await request(app)
     .post('/sessions')
     .send(user);
 
-  return response.body.token;
+  return session.body.token;
 }
