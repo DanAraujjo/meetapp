@@ -12,16 +12,6 @@ describe('User', () => {
 
   // #region create
 
-  it('Deve poder se registar', async () => {
-    const user = await factory.attrs('User');
-
-    const response = await request(app)
-      .post('/users')
-      .send(user);
-
-    expect(response.body).toHaveProperty('id');
-  });
-
   it('Deve criptografar a senha do usuário quando o mesmo for criado', async () => {
     const user = await factory.create('User', {
       password: '123456',
@@ -94,36 +84,18 @@ describe('User', () => {
     expect(response.status).toBe(400);
   });
 
-  // #endregion
+  it('Deve poder se registar', async () => {
+    const user = await factory.attrs('User');
 
-  // #region update
-
-  it('Deve ser possivel atualizar.', async () => {
-    const user = await factory.attrs('User', { password: '123456' });
-
-    // cria o usuario
-    await request(app)
+    const response = await request(app)
       .post('/users')
       .send(user);
 
-    // faz o login
-    const session = await request(app)
-      .post('/sessions')
-      .send(user);
-
-    const response = await request(app)
-      .put('/users')
-      .set('Authorization', `bearer ${session.body.token}`)
-      .send({
-        name: 'Novo nome',
-        email: `${user.email}`,
-        oldPassword: '123456',
-        password: '654321',
-        confirmPassword: '654321',
-      });
-
-    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id');
   });
+  // #endregion
+
+  // #region update
 
   it('Não pode atualizar sem informar o email.', async () => {
     const user = await factory.attrs('User');
@@ -286,6 +258,33 @@ describe('User', () => {
       });
 
     expect(response.status).toBe(400);
+  });
+
+  it('Deve ser possivel atualizar.', async () => {
+    const user = await factory.attrs('User', { password: '123456' });
+
+    // cria o usuario
+    await request(app)
+      .post('/users')
+      .send(user);
+
+    // faz o login
+    const session = await request(app)
+      .post('/sessions')
+      .send(user);
+
+    const response = await request(app)
+      .put('/users')
+      .set('Authorization', `bearer ${session.body.token}`)
+      .send({
+        name: 'Novo nome',
+        email: `${user.email}`,
+        oldPassword: '123456',
+        password: '654321',
+        confirmPassword: '654321',
+      });
+
+    expect(response.status).toBe(200);
   });
   // #endregion
 });
