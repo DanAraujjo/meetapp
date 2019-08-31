@@ -162,7 +162,7 @@ describe('Meetup', () => {
       .set('Authorization', `bearer ${token}`)
       .send({ ...meetup, file_id: file.id });
 
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1000));
 
     const response = await request(app)
       .put(`/meetups/${body.id}`)
@@ -208,7 +208,7 @@ describe('Meetup', () => {
       .set('Authorization', `bearer ${token}`)
       .send({ ...meetup, file_id: file.id });
 
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1000));
 
     const response = await request(app)
       .delete(`/meetups/${body.id}`)
