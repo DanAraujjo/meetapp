@@ -8,7 +8,7 @@ import createMeetUp from '../util/createMeetUp';
 
 import subscriptionMail from '../../src/app/jobs/SubscriptionMail';
 
-describe('SubscriptionMail', () => {
+describe('SubscriptionMaill', () => {
   beforeEach(async () => {
     await truncate();
   });
@@ -51,6 +51,12 @@ describe('SubscriptionMail', () => {
       user: { ...user },
     };
 
-    return subscriptionMail.handle({ data });
+    const originalHandle = subscriptionMail.handle;
+
+    subscriptionMail.handle = jest.fn(originalHandle);
+
+    await subscriptionMail.handle({ data });
+
+    expect(subscriptionMail.handle).toHaveBeenCalled();
   });
 });
