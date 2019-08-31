@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../../src/app';
 
 import truncate from '../util/truncate';
-import fetchUserAuthorization from '../util/fetchUserAuthorization';
+import fetchOwnerAuthorization from '../util/fetchOwnerAuthorization';
 import createMeetUp from '../util/createMeetUp';
 
 describe('Organizing', () => {
@@ -11,7 +11,7 @@ describe('Organizing', () => {
   });
 
   it('Deve retornar todos os eventos organizado pelo usuario atual', async () => {
-    const token = await fetchUserAuthorization();
+    const token = await fetchOwnerAuthorization();
 
     await createMeetUp(token);
     await createMeetUp(token);
