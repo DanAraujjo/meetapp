@@ -18,7 +18,7 @@ describe('Auth', () => {
   it('Não deve retornar nada, pois o token é inválido.', async () => {
     const response = await request(app)
       .get('/meetups')
-      .set('Authorization', `bearer token-invalido.`);
+      .set('Authorization', 'bearer token-invalido');
 
     expect(response.status).toBe(401);
   });

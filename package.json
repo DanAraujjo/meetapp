@@ -8,7 +8,7 @@
     "dev": "nodemon src/server.js",
     "queue": "nodemon src/queue.js",
     "pretest": "NODE_ENV=test && sequelize db:migrate",
-    "test": "NODE_ENV=test jest --runInBand",
+    "test": "NODE_ENV=test jest  --forceExit --detectOpenHandles --verbose  --maxWorkers=1",
     "posttest": "NODE_ENV=test && sequelize db:migrate:undo:all"
   },
   "dependencies": {
