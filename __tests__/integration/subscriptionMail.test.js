@@ -47,7 +47,7 @@ describe('SubscriptionMaill', () => {
       .set('Authorization', `bearer ${session.body.token}`);
 
     const data = {
-      meetup: { ...meetup, User: owner },
+      meetup: { ...meetup, user: owner },
       user: { ...user },
     };
 
